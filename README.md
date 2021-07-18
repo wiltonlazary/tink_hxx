@@ -1,14 +1,15 @@
-[![Build Status](https://travis-ci.org/haxetink/tink_hxx.svg?branch=master)](https://travis-ci.org/haxetink/tink_hxx)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/haxetink/public)
-
 # HXX = JSX - JS + HX
 
+[![Build Status](https://github.com/haxetink/tink_hxx/actions/workflows/ci.yml/badge.svg)](https://github.com/haxetink/tink_hxx/actions)
+[![Gitter](https://img.shields.io/gitter/room/haxetink/public?logo=gitter&)](https://gitter.im/haxetink/public)
+[![Discord](https://img.shields.io/discord/162395145352904705.svg?logo=discord&logoColor=white&label=discord)](https://discord.com/channels/162395145352904705/579634919576436736)
+
 This library provides a parser for JSX-like syntax in Haxe, as well as a generator. The documentation below describes the syntax permitted by the parser and the semantics used by the generator. You may roll your own generator on top of the parsed syntax tree (see `tink.hxx.Node`), in which case other rules apply.
-  
+
 ## Interpolation
 
 Unsurprisingly, you can embed expressions in HXX, either by using JSX like syntax or by using Haxe interpolation syntax, i.e. `$identifier` or `${expression}`.
-  
+
 ## Control structures
 
 HXX has support for a few control structures. Their main reason for existence is that implementing a reentrant parser with autocompletion support proved rather problematic in Haxe 3.
@@ -41,24 +42,24 @@ Switch statements are also supported, including guards but without `default` bra
 ```html
 <switch {weather}>
   <case {'sunny'}>
-  
+
     <sun />
-    
+
   <case {'mostly sunny'}>
 
     <sun />
     <cloud />
-  
+
   <case {cloudy} if {cloudy == 'cloudy'}>
-  
+
     <cloud />
     <cloud />
     <cloud />
-    
+
   <case {_}>
-  
+
     <rain />
-    
+
 </switch>
 ```
 
@@ -105,9 +106,9 @@ Regardless of which of the three above categories a function falls into, it must
      /* do something fancy */
    }
 
-   // Please note that it's not important what `VirtualDom` is. 
+   // Please note that it's not important what `VirtualDom` is.
    // The example assumes you're using HXX to create some sort of virtual dom structure.
-   
+
    // Here's how you'd use that function:
    hxx('
      <Window title="Look, I made a window!">
@@ -118,8 +119,8 @@ Regardless of which of the three above categories a function falls into, it must
    ');
 
    //And that is roughly equivalent to:
-   Window({ 
-     title: "Look, I made a window!", 
+   Window({
+     title: "Look, I made a window!",
      children: [
       p({}, ["In this window I have some super cool content!"]),
       button({}, ["Not bad!"]),
@@ -134,12 +135,12 @@ Regardless of which of the three above categories a function falls into, it must
    class Window {
      static public function fromHxx(attr:{ var title:VirtualDom; @:children var content:VirtualDom; }):VirtualDom {
        /* do something fancy */
-     }     
+     }
    }
 
    // in which case the HXX gets generated as follows:
-   Window.fromHxx({ 
-     title: "Look, I made a window!", 
+   Window.fromHxx({
+     title: "Look, I made a window!",
      content: [//because content was marked with `@:children`, it is populated with the tag's children
       p({}, ["In this window I have some super cool content!"]),
       button({}, ["Not bad!"]),
@@ -154,18 +155,18 @@ Regardless of which of the three above categories a function falls into, it must
    class Window {
      public function new(attr:{ title:VirtualDom, children:VirtualDom }):VirtualDom {
        /* do something fancy */
-     }     
+     }
    }
 
    // in which case the HXX gets generated as follows:
-   new Window({ 
-     title: "Look, I made a window!", 
+   new Window({
+     title: "Look, I made a window!",
      children: [
       p({}, ["In this window I have some super cool content!"]),
       button({}, ["Not bad!"]),
       button({}, ["This is lame!"]),
     ]
-   });  
+   });
    ```
 
    The choice between plain function, static method and plain constructor will usually be governed by the framework you're using HXX with.
@@ -212,13 +213,13 @@ hxx('
     <content>
       <p>In this window I have some super cool content!</p>
       <button>Not bad!</button>
-      <button>This is lame!</button>      
+      <button>This is lame!</button>
     </content>
   </Window>
 ');
 
 // And it will be transformed to the following Haxe code:
-Window({ 
+Window({
   title: [
     'Look, I made a ',
     strong({}, ['window']),
@@ -235,7 +236,7 @@ Window({
 Not relying on complex attributes, you could write this:
 
 ```haxe
-hxx('  
+hxx('
   <Window
     title=${hxx('
       Look, I made a <strong>window</strong>!
@@ -243,7 +244,7 @@ hxx('
     content=${hxx('
       <p>In this window I have some super cool content!</p>
       <button>Not bad!</button>
-      <button>This is lame!</button>      
+      <button>This is lame!</button>
     ')}
   />
 ');
@@ -324,7 +325,7 @@ You can specify a function as a complex argument and thus purely as a tag like s
             p1({}, ['Population: ', population])
           ]
         }
-      });  
+      });
       ```
 
    2. The argument becomes the implicit switch target in the function body. This is particularly useful for enums. Let's take an example from the manual:
@@ -343,11 +344,11 @@ You can specify a function as a complex argument and thus purely as a tag like s
         <List data={colors}>
           <render>
             <switch>
-              <case {Red}> 
+              <case {Red}>
                 red
-              <case {Green}> 
+              <case {Green}>
                 green
-              <case {Blue}> 
+              <case {Blue}>
                 blue
               <case {Rgb(_, _, _)}>
                 mixed color
@@ -370,7 +371,7 @@ You can specify a function as a complex argument and thus purely as a tag like s
           case Rgb(_, _, _):
             'mixed color'
         }
-      });        
+      });
       ```
 
       Nothing is to stop you from writing `<render color><switch {color}> ... </switch></render>` if you find it easier to read. The syntax exists merely to avoid forcing you to pick names for a value that you intend to decompose anyway.
@@ -392,7 +393,7 @@ You may also have an additional optional argument of type `haxe.PosInfos` at the
 HXX supports the spread operator in various places, to tackle the kind of problems that the [ES6 spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#Spread_in_object_literals) addresses [in JSX in particular](https://reactjs.org/docs/jsx-in-depth.html#spread-attributes).
 
 ### Attribute Spread
-  
+
 The spread operator can be used for attributes, e.g. `<someTag {...properties} />`. In this case it works very similarly to its JSX counterpart, but it is backed by [tink_anon's merging](https://github.com/haxetink/tink_anon#merge), which does the object composition at compile time.
 
 There rules are as follows:
@@ -515,10 +516,22 @@ Note that if there's exactly one argument, it will be called "event".
 
 ## Whitespace
 
-The treatment of whitespace depends on whether the generated structure even has any notion of whitespace or not. All HXX flavours can rely on `tink.hxx.Generator.trimString` which handles whitespace in a manner that is quite consistent with JSX:
-  
-- white space on a single line makes it to the output
-- white space that includes a line break is ignored
+The treatment of whitespace depends on whether the generated structure even has any notion of whitespace or not. The default HXX flavor uses the JSX style whitespace explained below.
+
+To customize this, you can pass a different parsing mode to the parser:
+
+- `Jsx` (default)
+- `Trim`: will trim leading and trailing whitespace in text nodes
+- `Preserve`: fully preserves white space
+
+You can also use `tink.hxx.Helpers.trimString` on any string to get JSX style whitespace treatment.
+
+### JSX style whitespace
+
+In JSX, whitespace is treated like so
+
+- whitespace on a single line makes it to the output
+- whitespace that includes a line break is ignored
 
 Example:
 
@@ -531,10 +544,20 @@ Example:
   <span>Hello</span>
   <span>World</span>
 </p>
+
+
 ```
 
-The first version will retain the white space between the two spans, the second one will not.
+The first version will retain the white space between the two spans, the second one will not.  
 
+To enforce a whitspace, `${' '}` can be used, e.g.:
+
+```html
+<p>
+  <span>Hello</span>${' '}
+  <span>World</span>
+</p>
+```
 
 ## Imports
 
@@ -546,8 +569,22 @@ Within HXX code you may import other HXX code from external files. Such an impor
 </div>
 ```
 
-By default the file name is resolved relatively to the call site, so you can put external HXX files into your classpaths, with files that depend on them. 
+By default the file name is resolved relatively to the call site, so you can put external HXX files into your classpaths, with files that depend on them.
 
 Some people will argue that "templates" should all be in one place and all code in another, but that's like "ordering" the information in a magazine by putting all pictures in one place and all text in another. Quite simply, you should not be doing such a thing. But if you know better, you may refer to the file by starting with `./` in which case resolution is performed relative to project root - actually to the working directory of the compilation process to be more exact.
 
 If you specify no extension in the file name, then `.hxx` is assumed by default (unless you're using an HXX flavor that alters this).
+
+## Inline Markup
+
+It's possible for tink_hxx to also process the inline markup literals added in Haxe 4.
+
+In that case, you may intermix markup and expression more freely, e.g.
+
+```haxe
+<ul>
+  {for (city in cities)
+    <li><b>{city.name}</b>: {city.pop} inhabitants</li>
+  }
+</ul>
+```
